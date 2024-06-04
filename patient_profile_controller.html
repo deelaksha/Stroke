@@ -3,9 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Patient Information View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .view-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .info-group {
+            margin-bottom: 15px;
+            display: flex; /* Use flexbox to align items in a row */
+            align-items: center; /* Vertically center items */
+        }
+        
+        .info-group label {
+            font-weight: bold;
+            color: #555;
+            display: inline-block;
+            margin-bottom: 5px;
+            font-size: 16px;
+            width: 150px; /* Adjust label width as needed */
+        }
+        
+        .info-group input {
+            flex: 1; /* Allow input to expand to fill remaining space */
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            margin-left: 10px; /* Add some space between label and input */
+        }
+        
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="view-container">
+        <h1>Patient Information</h1>
+        <div class="info-group">
+            <label>Gender:</label>
+            <input type="text" id="edit_gender" readonly>
+        </div>
+        <div class="info-group">
+            <label>Hypertension:</label>
+            <input type="text" id="edit_hypertension" readonly>
+        </div>
+        <div class="info-group">
+            <label>Heart Disease:</label>
+            <input type="text" id="edit_heart_disease" readonly>
+        </div>
+        <div class="info-group">
+            <label>Ever Married:</label>
+            <input type="text" id="edit_ever_married" readonly>
+        </div>
+        <div class="info-group">
+            <label>Work Type:</label>
+            <input type="text" id="edit_work_type" readonly>
+        </div>
+        <div class="info-group">
+            <label>Residence Type:</label>
+            <input type="text" id="edit_residence_type" readonly>
+        </div>
+        <div class="info-group">
+            <label>Average Glucose Level:</label>
+            <input type="text" id="edit_avg_glucose_level" readonly>
+        </div>
+        <div class="info-group">
+            <label>BMI:</label>
+            <input type="text" id="edit_bmi" readonly>
+        </div>
+        <div class="info-group">
+            <label>Smoking Status:</label>
+            <input type="text" id="edit_smoking_status" readonly>
+        </div>
+        <button onclick="toggleEdit()">Edit</button>
+        <button onclick="submitChanges()">Submit</button>
+    </div>
+
+    <script>
+        const patientData = {
+            phone_number: "123-456-7890",
+            gender: 1,
+            hypertension: 0,
+            heart_disease: 1,
+            ever_married: 1,
+            work_type: 2,
+            residence_type: 0,
+            avg_glucose_level: 125.5,
+            bmi: 28.7,
+            smoking_status: 1
+        };
+
+        // Function to populate fields with patient data
+        function populateFields() {
+            document.getElementById("edit_phone_number").value = patientData.phone_number;
+            document.getElementById("edit_gender").value = patientData.gender;
+            document.getElementById("edit_hypertension").value = patientData.hypertension;
+            document.getElementById("edit_heart_disease").value = patientData.heart_disease;
+            document.getElementById("edit_ever_married").value = patientData.ever_married;
+            document.getElementById("edit_work_type").value = patientData.work_type;
+            document.getElementById("edit_residence_type").value = patientData.residence_type;
+            document.getElementById("edit_avg_glucose_level").value = patientData.avg_glucose_level;
+            document.getElementById("edit_bmi").value = patientData.bmi;
+            document.getElementById("edit_smoking_status").value = patientData.smoking_status;
+        }
+
+        // Function to toggle between read-only and editable states
+        function toggleEdit() {
+            const inputs = document.querySelectorAll(".info-group input");
+            inputs.forEach(input => {
+                input.readOnly = !input.readOnly;
+            });
+        }
+
+        // Function to submit changes to the server
+        function submitChanges() {
+            const updatedData = {
+                phone_number: document.getElementById("edit_phone_number").value,
+                gender: document.getElementById("edit_gender").value,
+                hypertension: document.getElementById("edit_hypertension").value,
+                heart_disease: document.getElementById("edit_heart_disease").value,
+                ever_married: document.getElementById("edit_ever_married").value,
+                work_type: document.getElementById("edit_work_type").value,
+                residence_type: document.getElementById("edit_residence_type").value,
+                avg_glucose_level: document.getElementById("edit_avg_glucose_level").value,
+                bmi: document.getElementById("edit_bmi").value,
+                smoking_status: document.getElementById("edit_smoking_status").value
+            };
+
+            fetch('update_patient_info.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Patient information updated successfully.");
+                    toggleEdit();
+                } else {
+                    alert("Error updating patient information.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // On page load, populate fields with patient data
+        window.onload = populateFields;
+    </script>
 </body>
 </html>

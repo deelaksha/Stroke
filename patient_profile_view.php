@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,22 +20,40 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1 {
             text-align: center;
             color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
         .info-group {
-            margin: 10px 0;
+            margin-bottom: 15px;
         }
         .info-group label {
             font-weight: bold;
             color: #555;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
         }
         .info-group p {
-            margin: 5px 0;
-            color: #555;
+            margin: 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            color: #333;
+            font-size: 14px;
+            box-sizing: border-box;
         }
     </style>
 </head>

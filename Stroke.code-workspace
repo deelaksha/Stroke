@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "Stroke",
+			"path": "."
+		},
+		{
+			"name": "assets",
+			"path": "../../../Users/HP/OneDrive/Desktop/Hackathon/startbootstrap-sb-admin-gh-pages/assets"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "Stroke"
+	}
+}

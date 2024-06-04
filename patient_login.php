@@ -12,22 +12,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (strlen($patient_phone_number) !== 10) {
         echo "<script>alert('Error: Invalid Phone Number.');</script>";
     } else {
-        $sql = "INSERT INTO patient (patient_name, patient_phone_number) VALUES ('$patient_name','$patient_phone_number')";
+        // Check if phone number already exists
+        $sql_check_phone = "SELECT * FROM patient WHERE patient_phone_number = '$patient_phone_number'";
+        $result_check_phone = $conn->query($sql_check_phone);
 
-        if ($conn->query($sql) === TRUE) {
-            // Store user data in session
-            $_SESSION['patient_name'] = $patient_name;
-            $_SESSION['patient_phone_number'] = $patient_phone_number;
-            echo "<script>alert('New record created successfully');</script>";
-            // Redirect to patient_profile.php
-            header("Location: patient_profile.php");
-            exit(); // Make sure no other output is sent
+        if ($result_check_phone->num_rows > 0) {
+            // Phone number already exists, redirect to appropriate page
+            // Check if user data exists in patient_profile table
+            $sql_check_profile = "SELECT * FROM patient_profile WHERE patient_phone_number = '$patient_phone_number'";
+            $result_check_profile = $conn->query($sql_check_profile);
+
+            if ($result_check_profile->num_rows > 0) {
+                // Redirect to patient_profile_controller.php if user data exists
+                header("Location: patient_profile_controller.php");
+                exit();
+            } else {
+                // Redirect to patient_profile.php if user data does not exist
+                header("Location: patient_profile.php");
+                exit();
+            }
         } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            // Phone number doesn't exist, proceed with insertion
+            $sql = "INSERT INTO patient (patient_name, patient_phone_number) VALUES ('$patient_name','$patient_phone_number')";
+
+            if ($conn->query($sql) === TRUE) {
+                // Store user data in session
+                $_SESSION['patient_name'] = $patient_name;
+                $_SESSION['patient_phone_number'] = $patient_phone_number;
+                echo "<script>alert('New record created successfully');</script>";
+                
+                // Check if user data exists in patient_profile table
+                $sql_check_profile = "SELECT * FROM patient_profile WHERE patient_phone_number = '$patient_phone_number'";
+                $result_check_profile = $conn->query($sql_check_profile);
+
+                if ($result_check_profile->num_rows > 0) {
+                    // Redirect to patient_profile_controller.php if user data exists
+                    header("Location: patient_profile_controller.php");
+                    exit();
+                } else {
+                    // Redirect to patient_profile.php if user data does not exist
+                    header("Location: patient_profile.php");
+                    exit();
+                }
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error;
+            }
         }
     }
 }
 ?>
+
+
+
 
 
 <!DOCTYPE html>

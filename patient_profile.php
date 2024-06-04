@@ -1,8 +1,9 @@
 <?php 
+session_start();
 include 'connection.php';
 ?>
 <?php
-session_start(); // Start the session
+ // Start the session
 // Check if user is logged in, if not, redirect to login page
 if (!isset($_SESSION['patient_name']) || !isset($_SESSION['patient_phone_number'])) {
     header("Location: patient_login.php");
@@ -158,7 +159,7 @@ $patient_phone_number = $_SESSION['patient_phone_number'];
 </html>
 
 
-<?php // Start the session
+<?php
 include 'connection.php';
 
 // Check if user is logged in, if not, redirect to patient_login page
@@ -186,15 +187,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $smoking_status = $_POST['smoking_status'];
     $stroke = $_POST['stroke'];
 
-    // Insert form data into patient_profile table
-    $sql = "INSERT INTO patient_profile (patient_phone_number, patient_name, gender, age, hypertension, heart_disease, ever_married, work_type, residence_type, avg_glucose_level, bmi, smoking_status, stroke) 
-            VALUES ('$patient_phone_number', '$patient_name', '$gender', '$age', '$hypertension', '$heart_disease', '$ever_married', '$work_type', '$residence_type', '$avg_glucose_level', '$bmi', '$smoking_status', '$stroke')";
+    // Check if the user has already submitted the form
+    $sql_check = "SELECT * FROM patient_profile WHERE patient_phone_number = '$patient_phone_number'";
+    $result_check = $conn->query($sql_check);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('New record created successfully');</script>";
+    if ($result_check->num_rows > 0) {
+        // Redirect to patient_profile_controller.php if form already submitted
+        header("Location: patient_profile_controller.php");
+        exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        // Insert form data into patient_profile table
+        $sql_insert = "INSERT INTO patient_profile (patient_phone_number, patient_name, gender, age, hypertension, heart_disease, ever_married, work_type, residence_type, avg_glucose_level, bmi, smoking_status, stroke) 
+                VALUES ('$patient_phone_number', '$patient_name', '$gender', '$age', '$hypertension', '$heart_disease', '$ever_married', '$work_type', '$residence_type', '$avg_glucose_level', '$bmi', '$smoking_status', '$stroke')";
+
+        if ($conn->query($sql_insert) === TRUE) {
+            echo "<script>alert('New record created successfully');</script>";
+        } else {
+            echo "Error: " . $sql_insert . "<br>" . $conn->error;
+        }
     }
 }
 ?>
+
 

@@ -22,9 +22,38 @@
                       <div class="d-flex flex-column align-items-center text-center">
                         <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150">
                         <div class="mt-3">
-                          <h4>John Doe</h4>
-                          <p class="text-secondary mb-1">Phone No:8088137341</p>
-                          
+                        <?php
+    // Include the database connection file
+    include 'connection.php';
+
+    // Check if the selectedName is set in the POST data
+    if(isset($_POST['selectedName'])) {
+        // Get the selected name from the POST data
+        $selectedName = $_POST['selectedName'];
+
+        // Prepare and execute a query to fetch the phone number based on the selected name
+        $stmt = $conn->prepare("SELECT patient_phone_number FROM patient WHERE patient_name = ?");
+        $stmt->bind_param("s", $selectedName);
+        $stmt->execute();
+        $stmt->bind_result($phoneNumber);
+
+        // Fetch the result
+        $stmt->fetch();
+
+        // Close the statement
+        $stmt->close();
+
+        // Display the name and phone number
+        echo "<p>Name: $selectedName</p>";
+        echo "<p>Phone Number: $phoneNumber</p>";
+    } else {
+        // If selectedName is not set, display a message
+        echo "<p>No patient selected.</p>";
+    }
+
+    // Close the database connection
+    $conn->close();
+    ?>
                          
                         </div>
                       </div>

@@ -16,11 +16,19 @@ body {
     width: 100%;
     max-width: 400px;
     text-align: center;
+    animation: fadeInDown 0.5s ease-in-out;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 h2 {
     margin-bottom: 20px;
-    color: #333333;
+    color: #17b637;
+    font-size: 24px;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 .input-group {
@@ -32,12 +40,13 @@ label {
     display: block;
     margin-bottom: 5px;
     color: #17b637;
+    font-size: 16px;
 }
 
 input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #cccccc;
+    border: 1px solid #17b637;
     border-radius: 4px;
     box-sizing: border-box;
 }
@@ -51,8 +60,15 @@ button {
     color: white;
     font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #0ba730;
+    animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); }
 }

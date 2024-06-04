@@ -160,6 +160,7 @@ $patient_phone_number = $_SESSION['patient_phone_number'];
 
 
 <?php
+session_start();
 include 'connection.php';
 
 // Check if user is logged in, if not, redirect to patient_login page

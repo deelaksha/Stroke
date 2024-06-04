@@ -1,18 +1,30 @@
 <?php 
 include 'connection.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $doctor_name = $_POST['doctor_name'];
     $doctor_phone_number = $_POST['doctor_phone_number'];
 
-    if (strlen($doctor_phone_number) !== 10) {
-        echo "<script>alert('Error: Invalid Phone Number.');</script>";
-    } else {
-        $sql = "INSERT INTO doctor (doctor_name, doctor_phone_number) VALUES ('$doctor_name','$doctor_phone_number')";
+    // Check if the phone number and name are already registered
+    $check_sql = "SELECT * FROM doctor WHERE doctor_name = '$doctor_name' AND doctor_phone_number = '$doctor_phone_number'";
+    $result = $conn->query($check_sql);
 
-        if ($conn->query($sql) === TRUE) {
-            echo "<script>alert('New record created successfully');</script>";
+    if ($result->num_rows > 0) {
+        // If already registered, redirect to doctor_profile page
+        header("Location: doctor_profile.php");
+        exit();
+    } else {
+        // If not registered, insert the data
+        if (strlen($doctor_phone_number) !== 10) {
+            echo "<script>alert('Error: Invalid Phone Number.');</script>";
         } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            $sql = "INSERT INTO doctor (doctor_name, doctor_phone_number) VALUES ('$doctor_name','$doctor_phone_number')";
+
+            if ($conn->query($sql) === TRUE) {
+                echo "<script>alert('New record created successfully');</script>";
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error;
+            }
         }
     }
 }

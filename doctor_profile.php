@@ -1,6 +1,3 @@
-<?php  
-include 'connection.php';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,8 +39,9 @@ include 'connection.php';
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            align-items: flex-end;
+            align-items: flex-start;
             border-left: 2px solid #cccccc;
+            background-color: #f9f9f9;
         }
 
         .divider {
@@ -74,7 +72,7 @@ include 'connection.php';
         
         button {
             padding: 10px;
-            background-color: #007bff;
+            background-color: #4caf50; /* Green Light */
             border: none;
             border-radius: 4px;
             color: white;
@@ -83,7 +81,7 @@ include 'connection.php';
         }
         
         button:hover {
-            background-color: #0056b3;
+            background-color: #45a049; /* Darker Green */
         }
         
         p {
@@ -93,7 +91,60 @@ include 'connection.php';
         }
         
         .patient_name {
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            margin-bottom: 0;
+            color: #333333;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
             align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4caf50; /* Green Light */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 50%;
+            height: auto;
+        }
+
+        .doctor-info {
+            margin-bottom: 20px;
+        }
+
+        .doctor-info p {
+            margin: 0;
         }
     </style>
 </head>
@@ -102,16 +153,10 @@ include 'connection.php';
         <div class="content">
             <h2>Details</h2>
             <?php
+            include 'connection.php';
             if (isset($_GET['search'])) {
                 $search = $_GET['search'];
                 
-                // Create connection
-                $conn = new mysqli($servername, $username, $password, $dbname);
-                
-                // Check connection
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
                 
                 $sql = "SELECT patient_name, patient_phone_number FROM patient WHERE patient_phone_number LIKE ?";
                 $stmt = $conn->prepare($sql);
@@ -125,43 +170,40 @@ include 'connection.php';
                     $results[] = ['name' => $patient_name, 'phone' => $patient_phone_number];
                 }
                 
-                
-                
                 $stmt->close();
                 $conn->close();
-                echo "<p><strong>Name:</strong> John Doe</p>";
-                echo "<p><strong>Phone Number:</strong> +1 234 567 8901</p>";
             }
             ?>
         </div>
         <div class="sidebar">
-            <form action="" method="get">
-                <input type="text" id="search" name="search" placeholder="Search...">
-                <button type="submit">Search</button>
+            <form action="patient_stats.php" method="post" id="patientForm">
+                <input type="hidden" id="selectedName" name="selectedName">
             </form>
             <div class="divider"></div>
             <div class="patient_name">
                 <?php
-
-                 if (isset($results) && !empty($results)) {
-                     foreach ($results as $result) {
-                        echo '<div class="card" style="width: 18rem; cursor: pointer;" onclick="location.href=\'process.php?session_var='.urlencode($result['name']).'\'">';
-                        echo '<div class="card" style="width: 18rem;">';
-                         echo '<div class="card-body">';
-                         echo '<h5 class="card-title">Name: ' . htmlspecialchars($result['name']) . '</h5>';
-                         echo '<h5 class="card-title">Phone no: ' . htmlspecialchars($result['phone']) . '</h5>';
-                         echo '</div>';
-                         echo '</div>';
-
+                if (isset($results) && !empty($results)) {
+                    foreach ($results as $result) {
+                        echo '<div class="card" style="width: 18rem;" onclick="selectPatient(\'' . htmlspecialchars($result['name']) . '\')">';
+                        echo '<div class="card-body">';
+                        echo '<h5 class="card-title">Name: ' . htmlspecialchars($result['name']) . '</h5>';
+                        echo '<h5 class="card-title">Phone no: ' . htmlspecialchars($result['phone']) . '</h5>';
+                        echo '</div>';
+                        echo '</div>';
                     }
                 } else {
-                    echo "<p>Phone number: </p>";
-                    echo "<p>Name: </p>";
+                    echo "<p>No results found</p>";
                 }
                 ?>
             </div>
         </div>
     </div>
+
+    <script>
+        function selectPatient(name) {
+            document.getElementById("selectedName").value = name;
+            document.getElementById("patientForm").submit();
+        }
+    </script>
 </body>
 </html>
-s

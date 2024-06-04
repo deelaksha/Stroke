@@ -1,24 +1,23 @@
 <?php 
+include 'connection.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $patient_name = $_POST['patient_name'];
     $patient_phone_number = $_POST['patient_phone_number'];
 
-    if (strlen($phone) !== 10) {
+    if (strlen($patient_phone_number) !== 10) {
         echo "<script>alert('Error: Invalid Phone Number.');</script>";
-        exit;
-        $sql = "INSERT INTO `patient`(`patient_name`, `ptient_phon_number`) VALUES ($patient_name,'$patient_phone_number')";
+    } else {
+        $sql = "INSERT INTO patient (patient_name, patient_phone_number) VALUES ('$patient_name','$patient_phone_number')";
 
         if ($conn->query($sql) === TRUE) {
-            echo "New record created successfully";
+            echo "<script>alert('New record created successfully');</script>";
         } else {
             echo "Error: " . $sql . "<br>" . $conn->error;
         }
-
     }
-   
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

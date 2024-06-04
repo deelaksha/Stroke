@@ -1,0 +1,18 @@
+<div class="card" style="width: 18rem;">
+    <img class="card-img-top" src="..." alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">Name . htmlspecialchars($result['name']) .</h5>
+      <h5 class="card-title">Phone no:  . htmlspecialchars($result['phone']) .</h5>
+    </div>
+  </div>
+
+
+  foreach ($results as $result) {
+    echo "<div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="..." alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">Name . htmlspecialchars($result['name']) .</h5>
+          <h5 class="card-title">Phone no:  . htmlspecialchars($result['phone']) .</h5>
+        </div>
+      </div>";
+    }

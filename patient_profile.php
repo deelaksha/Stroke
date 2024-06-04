@@ -1,6 +1,16 @@
 <?php 
 include 'connection.php';
 ?>
+<?php
+session_start(); // Start the session
+// Check if user is logged in, if not, redirect to login page
+if (!isset($_SESSION['patient_name']) || !isset($_SESSION['patient_phone_number'])) {
+    header("Location: patient_login.php");
+    exit();
+}
+$patient_name = $_SESSION['patient_name'];
+$patient_phone_number = $_SESSION['patient_phone_number'];
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -70,9 +80,7 @@ include 'connection.php';
 <body>
     <div class="form-container">
         <h1>Patient Information Form</h1>
-        <form action="/submit" method="post">
-            <label for="phone_number">Phone Number:</label>
-            <input type="text" id="phone_number" name="phone_number" required>
+        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 
             <label for="gender">Gender:</label>
             <select id="gender" name="gender" required>
@@ -150,25 +158,43 @@ include 'connection.php';
 </html>
 
 
-<?php 
+<?php // Start the session
+include 'connection.php';
 
-    // Establish a connection to the MySQL database
-   include 'connection.php';
+// Check if user is logged in, if not, redirect to patient_login page
+if (!isset($_SESSION['patient_name']) || !isset($_SESSION['patient_phone_number'])) {
+    header("Location: patient_login.php");
+    exit();
+}
 
-    // Prepare the SQL statement
-    $sql = "INSERT INTO patient_profile (phone_number, gender, age, hypertension, ever_married, work_type, residence_type, avg_glucose_level, bmi, smoking_status, stroke) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+// Get patient information from session
+$patient_name = $_SESSION['patient_name'];
+$patient_phone_number = $_SESSION['patient_phone_number'];
 
-    // Prepare the statement
-    $stmt = $conn->prepare($sql);
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
+    $gender = $_POST['gender'];
+    $age = $_POST['age'];
+    $hypertension = $_POST['hypertension'];
+    $heart_disease = $_POST['heart_disease'];
+    $ever_married = $_POST['ever_married'];
+    $work_type = $_POST['work_type'];
+    $residence_type = $_POST['residence_type'];
+    $avg_glucose_level = $_POST['avg_glucose_level'];
+    $bmi = $_POST['bmi'];
+    $smoking_status = $_POST['smoking_status'];
+    $stroke = $_POST['stroke'];
 
-    // Bind the parameters
-    $stmt->bind_param("ssiissssssssi", $_POST['phone_number'], $_POST['gender'], $_POST['age'], $_POST['hypertension'], $_POST['heart_disease'], $_POST['ever_married'], $_POST['work_type'], $_POST['residence_type'], $_POST['avg_glucose_level'], $_POST['bmi'], $_POST['smoking_status'], $_POST['stroke']);
+    // Insert form data into patient_profile table
+    $sql = "INSERT INTO patient_profile (patient_phone_number, patient_name, gender, age, hypertension, heart_disease, ever_married, work_type, residence_type, avg_glucose_level, bmi, smoking_status, stroke) 
+            VALUES ('$patient_phone_number', '$patient_name', '$gender', '$age', '$hypertension', '$heart_disease', '$ever_married', '$work_type', '$residence_type', '$avg_glucose_level', '$bmi', '$smoking_status', '$stroke')";
 
-    // Execute the statement
-    $stmt->execute();
-
-    // Close the statement and the connection
-    $stmt->close();
-    $conn->close();
-
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('New record created successfully');</script>";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
 ?>
+

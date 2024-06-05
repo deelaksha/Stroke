@@ -50,6 +50,8 @@
                              <div class="hero-wrapper">
                              
                               <a href="exercises.php" class="btn" data-animation="fadeInLeft" data-delay=".3s">Video Tutorials</a>
+                              <a href="Mental_ability.php" class="btn" data-animation="fadeInLeft" data-delay=".3s">Train Mental Ability</a>
+
                                 </div>
                                 <div class="hero__caption">
                                     <h1 data-animation="fadeInUp" data-delay=".3s">Health is wealth  keep it healthy </h1>

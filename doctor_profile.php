@@ -1,3 +1,26 @@
+<?php
+session_start();
+            include 'connection.php';
+            if (isset($_GET['search'])) {
+                $search = $_GET['search'];
+                
+                
+                $sql = "SELECT patient_name, patient_phone_number FROM patient WHERE patient_phone_number LIKE ?";
+                $stmt = $conn->prepare($sql);
+                $searchParam = "%" . $search . "%";
+                $stmt->bind_param("s", $searchParam);
+                $stmt->execute();
+                $stmt->bind_result($patient_name, $patient_phone_number);
+                
+                $results = [];
+                while ($stmt->fetch()) {
+                    $results[] = ['name' => $patient_name, 'phone' => $patient_phone_number];
+                }
+                
+                $stmt->close();
+                $conn->close();
+            }
+            ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,40 +174,22 @@
 <body>
     <div class="container">
         <div class="content">
-            <h2>Details</h2>
-            <?php
-            include 'connection.php';
-            if (isset($_GET['search'])) {
-                $search = $_GET['search'];
-                
-                
-                $sql = "SELECT patient_name, patient_phone_number FROM patient WHERE patient_phone_number LIKE ?";
-                $stmt = $conn->prepare($sql);
-                $searchParam = "%" . $search . "%";
-                $stmt->bind_param("s", $searchParam);
-                $stmt->execute();
-                $stmt->bind_result($patient_name, $patient_phone_number);
-                
-                $results = [];
-                while ($stmt->fetch()) {
-                    $results[] = ['name' => $patient_name, 'phone' => $patient_phone_number];
-                }
-                
-                $stmt->close();
-                $conn->close();
-            }
-            ?>
+        <p>Name: <?php echo "Paranjay Reddy" ?></p>
+        <p>Phone Number: <?php echo "7876546432" ?></p>
+           
         </div>
+        
         <div class="sidebar">
-            <form action="patient_stats.php" method="post" id="patientForm">
-                <input type="hidden" id="selectedName" name="selectedName">
+            <form action="" method="get">
+                <input type="text" id="search" name="search" placeholder="Search...">
+                <button type="submit">Search</button>
             </form>
             <div class="divider"></div>
             <div class="patient_name">
                 <?php
                 if (isset($results) && !empty($results)) {
                     foreach ($results as $result) {
-                        echo '<div class="card" style="width: 18rem;" onclick="selectPatient(\'' . htmlspecialchars($result['name']) . '\')">';
+                        echo '<div class="card" style="width: 18rem;" onclick="location.href=\'patient_stats.php?session_var='.urlencode($result['name']).'\'">';
                         echo '<div class="card-body">';
                         echo '<h5 class="card-title">Name: ' . htmlspecialchars($result['name']) . '</h5>';
                         echo '<h5 class="card-title">Phone no: ' . htmlspecialchars($result['phone']) . '</h5>';
@@ -198,12 +203,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function selectPatient(name) {
-            document.getElementById("selectedName").value = name;
-            document.getElementById("patientForm").submit();
-        }
-    </script>
 </body>
 </html>
